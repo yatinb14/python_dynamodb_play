@@ -1,0 +1,67 @@
+---
+- name: sample app
+  hosts: lab
+
+  tasks:
+
+  - name: Installing python3
+    apt:
+      name: python3.8
+      state: present
+      update_cache: true
+
+  - name: install PIP3
+    apt:
+      name: python3-pip
+      state: present
+    
+
+  - name: Install BOTO & BOTO3
+    pip:
+      name: 
+      - boto
+      - boto3
+
+  - name: install Git
+    apt:
+      update_cache: true
+      name: git
+      state: present
+
+  - name: git clone
+    git:
+      repo: 'https://github.com/yatinb14/flask_and_aws_dynamodb.git'
+      version: master
+      accept_hostkey: yes
+      force: yes    
+
+  
+  - name: Installing imp utilities
+    pip:
+      executable: pip3
+      requirements: /flask_and_aws_dynamodb/requirements.txt
+
+  - name: Create dynamo table with hash key
+    dynamodb_table:
+      name: users
+      region: us-east-2
+      hash_key_name: email
+      hash_key_type: STRING
+      read_capacity: 5
+      write_capacity: 5
+
+  - name: Echo my_env_var
+    shell: "echo $REGION_NAME"
+    environment:
+      REGION_NAME: "{{ REGION_NAME }}"
+
+  - name: permissions
+    shell: cd /flask_and_aws_dynamodb && chmod 777 appstart.sh
+
+  - name:  Executing shell script
+    shell: /flask_and_aws_dynamodb/appstart.sh start 
+
+
+    #ansible-playbook play8.yaml --extra-vars "REGION_NAME=us-east-2"
+      
+
