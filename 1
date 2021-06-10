@@ -28,15 +28,9 @@
       name: git
       state: present
 
-  - name: Create a Directory
-    file:
-      name: /home/thinknyx
-      state: directory
-
   - name: git clone
     git:
       repo: 'https://github.com/yatinb14/flask_and_aws_dynamodb.git'
-      dest: /home/thinknyx/
       version: master
       accept_hostkey: yes
       force: yes    
@@ -45,7 +39,7 @@
   - name: Installing imp utilities
     pip:
       executable: pip3
-      requirements: /home/thinknyx/requirements.txt
+      requirements: /flask_and_aws_dynamodb/requirements.txt
 
   - name: Create dynamo table with hash key
     dynamodb_table:
@@ -62,10 +56,10 @@
       REGION_NAME: "{{ REGION_NAME }}"
 
   - name: permissions
-    shell: cd /home/thinknyx && chmod 777 appstart.sh
+    shell: cd /flask_and_aws_dynamodb && chmod 777 appstart.sh
 
   - name:  Executing shell script
-    shell: nohup /home/thinknyx/appstart.sh start 
+    shell: /flask_and_aws_dynamodb/appstart.sh start 
 
 
     #ansible-playbook play8.yaml --extra-vars "REGION_NAME=us-east-2"
